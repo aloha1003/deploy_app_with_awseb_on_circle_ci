@@ -1,0 +1,16 @@
+{
+  "name": "ci_cd_with_docker_aws",
+  "version": "1.0.0",
+  "description": "Node.js on Docker",
+  "author": "Aloha Lin <aloha.lin@example.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+   "devDependencies": {
+    "mocha": "^2.2.4"
+  }
+}
