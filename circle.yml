@@ -1,6 +1,9 @@
 machine:
   node:
     version: 0.10
+  dependencies:
+    pre:
+      - apt-get install -y npm
 test:
   override:
     - ./node_modules/.bin/mocha
