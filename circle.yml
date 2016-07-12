@@ -1,11 +1,31 @@
 # circle.yml
 machine:
+  pre:
+   - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+  # Install eb need python
+  python:
+    version: 2.7
   node:
     version: 4.0.0
+  services:
+    - docker
 dependencies:
   pre:
     - sudo apt-get install -y npm
+    - npm install 
+    - sudo pip install awsebcli --ignore-installed setuptools
+  override:
+    - docker build -t docker_node .
 test:
   override:
     - ./node_modules/.bin/mocha
-    
+    #use curl test this site is correctly executed 
+    - docker run -d -p 3000:3000 --name docker_node_run docker_node
+    - curl --retry 10 --retry-delay 5 -v http://localhost:3000
+# Deploy To Elatic beantalk
+deployment:
+  production:
+    branch: master
+    commands:
+      - bash ./setup-eb.sh
+      - eb deploy env-production
