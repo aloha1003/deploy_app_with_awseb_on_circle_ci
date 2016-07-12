@@ -7,5 +7,5 @@ global:
   default_ec2_keyname: null
   default_platform: docker
   default_region: us-west-2
-  profile: eb-cli
+  profile: default
   sc: git

@@ -11,8 +11,8 @@
 # echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> /home/ubuntu/.aws/config
 # echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> /home/ubuntu/.aws/config
 
-value=`cat /home/ubuntu/.aws/config`
-echo "$value"
+# value=`cat /home/ubuntu/.aws/config`
+# echo "$value"
 
 mv .elasticbeanstalk/config.global.yml .elasticbeanstalk/config.yml
 
