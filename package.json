@@ -8,7 +8,9 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "request": "latest",
+    "chai": "latest"
   },
    "devDependencies": {
     "mocha": "^2.2.4"

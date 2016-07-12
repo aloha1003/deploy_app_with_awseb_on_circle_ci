@@ -8,7 +8,7 @@ describe('Array', function() {
     })
 })
 
-var 
+/*var 
     assert = require('assert'),
     request = require("request"),
     http = require('http');
@@ -24,4 +24,4 @@ describe('server', function() {
             });
         });
     });
-});
+});*/
