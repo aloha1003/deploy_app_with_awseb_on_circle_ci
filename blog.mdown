@@ -1,0 +1,279 @@
+# deploy_app_with_awseb_on_circle_ci
+Deploy docker app with AWS Elastic Beanstalk
+
+#Tools:
+Git - version control system
+GitHub -  Repository、code review
+CircleCI - Automated build, test, deploy
+Docker - Portable, lightweight execution environment
+AWS Elastic Beanstalk - Cloud platform
+
+#You can learn :
+Learn GiHub workflow (GitHub Flow), use Pull Request and a branch to complete code review (Code Review) and the environment configuration, for example: Development Edition (development), beta (testing / QA), on-line product (staging / production) .
+Use Docker: Unity developers, testers, and the production environment
+Use EB CLI : deploy apps to AWS Elastic Beanstalk.
+Use CircleCI : Detection GitHub code branch, if the update is triggered: Build Docker environment, unit testing, and then automatically deploy the new version to the AWS EB. 
+
+#Outline:
+1. Nodejs
+   * run Node.js App in local end
+   * test Node.js in local end
+2. GitHub
+3. CircleCI
+  * test Node.js App in CircleCI
+4. Code Review with GitHub Flow
+5. Docker 
+  * run Node.js in Docker
+  * test Node.js in Docker
+  * test Docker App in CircleCI
+6. AWS Elastic Beanstalk
+  * deploy AWS in local end.
+  * deploy AWS in CircleCI
+  
+# Node.js 
+run Node.js App in local end 
+ -------------
+   Create New Project 
+  
+##### Create Project Directory 
+  
+          mkdir ci_cd_with_docker_aws
+        cd ci_cd_with_docker_aws
+  
+   2.Initial Node.js enviroment
+  
+*create package.json
+    
+        {
+          "name": "ci_cd_with_docker_aws",
+          "version": "1.0.0",
+          "description": "Node.js on Docker",
+          "author": "Aloha Lin <aloha.lin@example.com>",
+          "main": "server.js",
+          "scripts": {
+            "start": "node server.js"
+          },
+          "dependencies": {
+            "express": "^4.13.3"
+          }
+        }
+
+- execute npm init
+    
+        $ npm init
+Ok. You will  find node_modules directory is created
+
+Write a simple Node.js App
+
+     //server.js
+     'use strict';
+    
+    var express = require('express');
+    
+    // Constants
+    var PORT = 3000;
+    
+    // App
+    var app = express();
+    app.get('/', function (req, res) {
+      res.send('Hello World \n');
+    });
+    
+    app.listen(PORT);
+    console.log('Running on http://localhost:' + PORT);
+    
+Execute npm start to start node.js app
+    
+        $ npm start &
+    
+Test app is running
+    
+    $ curl http://localhost:3000
+    
+    You will found it echo Hello World
+    
+#test Node.js in local end    
+---
+    $ npm install mocha --save-dev
+> --save-dev :just install in devlopment enviroment
+
+## write test case 
+    
+    $ mkdir test
+    $ cd  test
+    $ touch test.js
+    
+add  an incorrect test in test.js 
+        // test/test.js
+    var assert = require("assert")
+    describe('Array', function(){
+      describe('#indexOf(0)', function(){
+        it('should return -1 when the value is not present', function(){
+          assert.equal(1, [1,2,3].indexOf(0));
+        })
+      })
+    })
+# execute mocha to testing
+    $ ./node_modules/.bin/mocha
+    
+        Array
+        #indexOf(0)
+          1) should return -1 when the value is not present
+    
+    
+      0 passing (8ms)
+      1 failing
+    
+      1) Array #indexOf(0) should return -1 when the value is not present:
+    
+          AssertionError: 0 == -1
+          + expected - actual
+    
+          -0
+          +-1
+    
+          at Context.<anonymous> (test/test.js:6:14)
+          
+This result display 1 failing , because       ```1, [1,2,3].indexOf(0) ``` return != -1
+
+ So, let me fix this error
+ 
+ ``` assert.equal(-1, [1,2,3].indexOf(0));```
+ 
+ Execute mocha testing again .     
+ 
+         $ ./node_modules/.bin/mocha
+          Array
+        #indexOf(0)
+          ✓ should return -1 when the value is not present
+    
+    
+      1 passing (6ms)
+
+---
+#GitHub
+
+1. Initialize git enviroment
+
+        $ git init .
+        $ git status
+        
+        On branch master
+    
+        Initial commit
+        
+        Untracked files:
+          (use "git add <file>..." to include in what will be committed)
+        
+            node_modules/
+            package.json
+            test/
+            
+1. We don't add node_modules to reposity because thie dircetory will automatically generated. So we must add node_modules to .gitignore
+    
+        $ echo node_modules > .gitignore 
+        
+2.  try check    git status again 
+    
+    $ git status
+    
+        On branch master
+    
+        Initial commit
+        
+        Untracked files:
+          (use "git add <file>..." to include in what will be committed)
+        
+            package.json
+            test/
+            
+add file to reposity
+    
+        git add .
+        git commit -m ' first commit'
+        
+Go to GitHub create new reposity : deploy_app_with_awseb_on_circle_ci
+
+  $ git remote add origin https://github.com/<USER_NAME>/deploy_app_with_awseb_on_circle_ci.git
+  $ git push
+
+# Circle CI
+  
+Add Project 
+  Choose deploy_app_with_awseb_on_circle_ci And click Build button
+## Test app in CircleCi
+
+  create a circle.yml
+  
+  # circle.yml
+    
+      machine:
+        node:
+          version: 0.10
+      
+      test:
+        override:
+          - ./node_modules/.bin/mocha
+
+push to reposity
+  
+    $ git add circle.yml
+    $ git commit -m 'add circle.yml'
+    $ git push
+If push success, it will trigger CircleCI to automatically build
+
+Then go to CircleCI -> Builds
+
+ We can find 
+Configure Environments Variables
+
+On Project Settings > Environment Variables add this keys:
+
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+The aws user must have the right permissions. This can be hard, maybe, this can help you.
+Create a bash script to create the eb config file
+
+./setup-eb.sh
+
+set -x
+set -e
+
+mkdir /home/ubuntu/.aws
+touch /home/ubuntu/.aws/config
+chmod 600 /home/ubuntu/.aws/config
+echo "[profile eb-cli]" > /home/ubuntu/.aws/config
+echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> /home/ubuntu/.aws/config
+echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> /home/ubuntu/.aws/config
+Configure circle.yml
+
+Add the awsebcli dependency:
+
+dependencies:
+  pre:
+    - sudo pip install awsebcli
+Add the deployment config:
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - bash ./setup-eb.sh
+      - eb deploy
+If your deploy user don't have the elasticbeanstalk:DescribeEvents permission, the eb deploy will run for ever. CircleCI will cancel it after 10 minutes and break the build with timeout.
+Create the EB Cli config file
+
+eb init will create this file for you. However, if you don't want to run it, you can simply create and configure this file manualy:
+
+./elasticbeanstalk/config.yml
+
+branch-defaults:
+  master:
+    environment: you-environment-name
+global:
+  application_name: your-application-name
+  default_ec2_keyname: ec2-key-pair-name
+  default_platform: 64bit Amazon Linux 2015.03 v1.4.3 running Ruby 2.2 (Puma)
+  default_region: sa-east-1
+  profile: eb-cli
+  sc: git

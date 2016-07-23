@@ -10,7 +10,7 @@ var PORT = 3000;
 
 
 app.get('/', function(req, res) {
-    res.send('Deploy From Jenkins \n');
+    res.send('Deploy From Travis CI \n');
 });
 exports.close = function() {
     server.close(function() {
