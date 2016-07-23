@@ -3,10 +3,6 @@ sudo: required
 language: node_js
 node_js:
   - "6"
-  - "6.1"
-  - "5.11"
-  - "0.6"
-  - "iojs"
 services:
   - docker
 before_install:
@@ -18,7 +14,7 @@ script:
   - ./node_modules/.bin/mocha
     #use curl test this site is correctly executed 
   - docker run -d -p 3000:3000 --name docker_node_run docker_node
-  - curl --retry 10 --retry-delay 5 -v http://localhost:3000
+  #- curl --retry 10 --retry-delay 5 -v http://localhost:3000
 deploy:
   skip_cleanup: true
   provider: elasticbeanstalk
