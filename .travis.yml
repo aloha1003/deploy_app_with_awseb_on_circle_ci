@@ -1,20 +1,17 @@
 sudo: required
 
-language: node_js, python
+language: node_js
 node_js:
   - "6"
   - "6.1"
   - "5.11"
   - "0.6"
   - "iojs"
-python:
-  - "2.7"
 services:
   - docker
 before_install:
   - sudo apt-get install -y npm
   - npm install 
-  - sudo pip install awsebcli --ignore-installed setuptools
 install:
   - docker build -t docker_node .
 script:
@@ -26,8 +23,7 @@ deploy:
   skip_cleanup: true
   provider: elasticbeanstalk
   access_key_id: $AWS_ACCESS_KEY_ID
-  secret_access_key:
-  secure: $AWS_SECRET_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
   region: $AWS_EB_DEFAULT_REGION
   app: $AWS_EB_APPLICATION_NAME
   env: $AWS_EB_ENV
