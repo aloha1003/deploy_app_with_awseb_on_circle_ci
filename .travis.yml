@@ -22,6 +22,7 @@ deploy:
   secret_access_key: $AWS_SECRET_ACCESS_KEY
   region: $AWS_EB_DEFAULT_REGION
   app: $AWS_EB_APPLICATION_NAME
+  bucket_name: $AWS_EB_BUCKET
   env: $AWS_EB_ENV
   on:
     branch: master
