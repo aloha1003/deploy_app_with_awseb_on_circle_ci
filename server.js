@@ -10,6 +10,7 @@ var PORT = 3000;
 
 
 app.get('/', function(req, res) {
+    console.log('On cloud Watch')
     res.send('Deploy From Travis CI \n');
 });
 exports.close = function() {
